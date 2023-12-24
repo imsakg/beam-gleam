@@ -145,3 +145,5 @@ impl DivAssign<f64> for Vec3 {
         self.e[2] /= t;
     }
 }
+
+pub use Vec3 as Point3;

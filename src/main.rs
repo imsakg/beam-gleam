@@ -16,20 +16,20 @@ use crate::utils::color;
 
 fn hit_sphere(center: &Point3, radius: f64, r: &Ray) -> f64 {
     let oc = r.origin() - *center;
-    let a = Vec3::dot(&r.direction(), &r.direction());
-    let b = 2.0 * Vec3::dot(&oc, &r.direction());
-    let c = Vec3::dot(&oc, &oc) - radius * radius;
-    let discriminant = b * b - 4.0 * a * c;
-    if (discriminant < 0.0) {
+    let a = r.direction().length_squared();
+    let half_b = Vec3::dot(&oc, &r.direction());
+    let c = oc.length_squared() - radius * radius;
+    let discriminant = half_b * half_b - a * c;
+    if discriminant < 0.0 {
         -1.0
     } else {
-        (-b - discriminant.sqrt()) / (2.0 * a)
+        (-half_b - discriminant.sqrt()) / a
     }
 }
 
 fn ray_color(r: &Ray) -> Color {
     let t = hit_sphere(&Point3::new(0.0, 0.0, -1.0), 0.5, r);
-    if (t > 0.0) {
+    if t > 0.0 {
         let n = Vec3::unit_vector(r.at(t) - Vec3::new(0.0, 0.0, -1.0));
         return 0.5 * Color::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0);
     }

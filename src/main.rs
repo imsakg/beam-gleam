@@ -1,12 +1,18 @@
 use std::{
     fs,
     io::{BufWriter, Write},
+    rc::Rc,
 };
 
 // modules
+mod hittable;
+mod hittable_list;
 mod ray;
+mod sphere;
 mod utils;
 
+use hittable::{HitRecord, Hittable};
+use hittable_list::HittableList;
 use ray::Ray;
 use utils::color::Color;
 use utils::vec3::Point3;
@@ -27,7 +33,23 @@ fn hit_sphere(center: &Point3, radius: f64, r: &Ray) -> f64 {
     }
 }
 
-fn ray_color(r: &Ray) -> Color {
+fn ray_color(r: &Ray, world: &HittableList) -> Color {
+    let mut rec = HitRecord {
+        p: Point3::new(0.0, 0.0, 0.0),
+        normal: Vec3::new(0.0, 0.0, 0.0),
+        t: 0.0,
+        front_face: false,
+    };
+
+    if world.hit(r, 0.0, f64::INFINITY, &mut rec) {
+        return 0.5
+            * Color::new(
+                rec.normal.x() + 1.0,
+                rec.normal.y() + 1.0,
+                rec.normal.z() + 1.0,
+            );
+    }
+
     let t = hit_sphere(&Point3::new(0.0, 0.0, -1.0), 0.5, r);
     if t > 0.0 {
         let n = Vec3::unit_vector(r.at(t) - Vec3::new(0.0, 0.0, -1.0));
@@ -42,11 +64,22 @@ fn main() -> std::io::Result<()> {
     // Image
     let aspect_ratio = 16.0 / 9.0;
     // Calculate the image height, and ensure that it is at least 1.
-    let image_width = 400;
+    let image_width = 1600;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
     if image_height < 1 {
         panic!("Image height must be at least 1.");
     }
+
+    // World
+    let mut world = HittableList::new();
+    world.add(Rc::new(sphere::Sphere::new(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+    )));
+    world.add(Rc::new(sphere::Sphere::new(
+        Point3::new(0.0, -100.5, -1.0),
+        100.0,
+    )));
 
     // Camera
     let focal_length = 1.0;
@@ -83,7 +116,7 @@ fn main() -> std::io::Result<()> {
             let ray_direction = pixel_center - camera_center;
             let r = Ray::new(camera_center, ray_direction);
 
-            let pixel_color = ray_color(&r);
+            let pixel_color = ray_color(&r, &world);
 
             f_handle.write_all(color::write_color(&pixel_color).as_bytes())?;
         }

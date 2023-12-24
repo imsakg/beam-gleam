@@ -16,6 +16,7 @@ fn main() -> std::io::Result<()> {
     f_handle.write_all(header.as_bytes())?;
 
     for j in 0..image_height {
+        // Print progress
         for i in 0..image_width {
             let r = i as f64 / (image_width - 1) as f64;
             let g = j as f64 / (image_height - 1) as f64;
@@ -28,7 +29,9 @@ fn main() -> std::io::Result<()> {
             let pixel = format!("{} {} {}\n", ir, ig, ib);
             f_handle.write_all(pixel.as_bytes())?;
         }
+        eprint!("\rScanlines remaining: {} ", image_height - j - 1);
     }
+    eprintln!("\nDone.");
 
     Ok(())
 }

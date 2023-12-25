@@ -138,12 +138,8 @@ impl Camera {
             max: INFINITY,
         }));
         if world.hit(r, temp, &mut rec) {
-            return 0.5
-                * Color::new(
-                    rec.normal.x() + 1.0,
-                    rec.normal.y() + 1.0,
-                    rec.normal.z() + 1.0,
-                );
+            let direction = Vec3::random_on_hemisphere(rec.normal);
+            return 0.5 * self.ray_color(&Ray::new(rec.p, direction), world);
         }
 
         let unit_direction = Vec3::unit_vector(r.direction());

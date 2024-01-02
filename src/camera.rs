@@ -14,6 +14,7 @@ pub struct Camera {
     pub aspect_ratio: f64,
     pub image_width: i32,
     pub samples_per_pixel: i32,
+    pub max_depth: i32,
 
     image_height: i32,
     center: Point3,
@@ -23,7 +24,12 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(aspect_ratio: f64, image_width: i32, samples_per_pixel: i32) -> Self {
+    pub fn new(
+        aspect_ratio: f64,
+        image_width: i32,
+        samples_per_pixel: i32,
+        max_depth: i32,
+    ) -> Self {
         let image_height = (image_width as f64 / aspect_ratio) as i32;
         let image_height = if image_height < 1 { 1 } else { image_height };
 
@@ -51,6 +57,7 @@ impl Camera {
             aspect_ratio,
             image_width,
             samples_per_pixel,
+            max_depth,
             image_height,
             center,
             pixel00_loc,
@@ -70,7 +77,7 @@ impl Camera {
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
                 for sample in 0..self.samples_per_pixel {
                     let r = self.get_ray(i, j);
-                    pixel_color = pixel_color + self.ray_color(&r, world);
+                    pixel_color = pixel_color + self.ray_color(&r, self.max_depth, world);
                 }
                 println!(
                     "{}",
@@ -101,7 +108,7 @@ impl Camera {
         let pixel_delta_u = viewport_u / self.image_width as f64;
         let pixel_delta_v = viewport_v / image_height as f64;
 
-        // Calculate the location of the upper left pixel.
+        // Calculate the location of the upper l eft pixel.
         let viewport_upper_left =
             center - Vec3::new(0.0, 0.0, focal_length) - viewport_u / 2.0 - viewport_v / 2.0;
         let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
@@ -125,7 +132,11 @@ impl Camera {
         (px * self.pixel_delta_u) + (py * self.pixel_delta_v)
     }
 
-    fn ray_color(&self, r: &Ray, world: &HittableList) -> Color {
+    fn ray_color(&self, r: &Ray, depth: i32, world: &HittableList) -> Color {
+        if (depth <= 0) {
+            return Color::new(0.0, 0.0, 0.0);
+        }
+
         let mut rec = HitRecord {
             p: Point3::new(0.0, 0.0, 0.0),
             normal: Vec3::new(0.0, 0.0, 0.0),
@@ -134,12 +145,13 @@ impl Camera {
         };
 
         let temp = Interval::new(Some(Interval {
-            min: 0.0,
+            min: 0.001,
             max: INFINITY,
         }));
+
         if world.hit(r, temp, &mut rec) {
-            let direction = Vec3::random_on_hemisphere(rec.normal);
-            return 0.5 * self.ray_color(&Ray::new(rec.p, direction), world);
+            let direction = rec.normal + Vec3::random_unit_vector();
+            return 0.5 * self.ray_color(&Ray::new(rec.p, direction), depth - 1, world);
         }
 
         let unit_direction = Vec3::unit_vector(r.direction());

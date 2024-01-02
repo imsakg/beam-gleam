@@ -48,7 +48,7 @@ fn main() -> std::io::Result<()> {
         100.0,
     )));
 
-    let cam = Camera::new(16_f64 / 9_f64, 720, 100);
+    let cam = Camera::new(16_f64 / 9_f64, 400, 100, 50);
     cam.render(&world);
     Ok(())
 }

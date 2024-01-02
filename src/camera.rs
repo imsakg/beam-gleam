@@ -151,7 +151,8 @@ impl Camera {
 
         if world.hit(r, temp, &mut rec) {
             let direction = rec.normal + Vec3::random_unit_vector();
-            return 0.5 * self.ray_color(&Ray::new(rec.p, direction), depth - 1, world);
+            let gamma = 0.25;
+            return gamma * self.ray_color(&Ray::new(rec.p, direction), depth - 1, world);
         }
 
         let unit_direction = Vec3::unit_vector(r.direction());

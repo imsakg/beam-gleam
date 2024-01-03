@@ -27,6 +27,13 @@ impl Vec3 {
         self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
     }
 
+    pub fn near_zero(&self) -> bool {
+        // Return true if the vector is close to zero in all dimensions.
+        let s = 1e-8;
+
+        return (self.e[0].abs() < s) && (self.e[1].abs() < s) && (self.e[2].abs() < s);
+    }
+
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
@@ -79,6 +86,10 @@ impl Vec3 {
         } else {
             -on_sphere
         }
+    }
+
+    pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+        v - 2.0 * Vec3::dot(&v, &n) * n
     }
 }
 

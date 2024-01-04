@@ -1,0 +1,12 @@
+name = "beam_gleam"
+version = "0.2.0"
+description = "A deterministic educational raytracer for the BEAM"
+licences = ["MIT"]
+repository = { type = "github", user = "imsakg", repo = "beam-gleam" }
+target = "erlang"
+
+[dependencies]
+gleam_stdlib = ">= 0.44.0 and < 2.0.0"
+
+[dev-dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"

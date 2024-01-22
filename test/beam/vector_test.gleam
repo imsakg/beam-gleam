@@ -17,3 +17,10 @@ pub fn displacement_test() {
   vector.negate(vector.new(1.0, -2.0, 0.0))
   |> should.equal(vector.new(-1.0, 2.0, 0.0))
 }
+
+pub fn scaling_test() {
+  let v = vector.new(2.0, -4.0, 1.0)
+  vector.scale(v, 0.5) |> should.equal(vector.new(1.0, -2.0, 0.5))
+  vector.multiply(v, vector.new(0.5, 0.0, 3.0))
+  |> should.equal(vector.new(1.0, -0.0, 3.0))
+}

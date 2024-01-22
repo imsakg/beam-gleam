@@ -21,3 +21,11 @@ pub fn subtract(a: Vec, b: Vec) -> Vec {
 pub fn negate(a: Vec) -> Vec {
   subtract(zero(), a)
 }
+
+pub fn scale(a: Vec, amount: Float) -> Vec {
+  Vec(a.x *. amount, a.y *. amount, a.z *. amount)
+}
+
+pub fn multiply(a: Vec, b: Vec) -> Vec {
+  Vec(a.x *. b.x, a.y *. b.y, a.z *. b.z)
+}

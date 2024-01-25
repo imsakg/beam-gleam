@@ -24,3 +24,10 @@ pub fn scaling_test() {
   vector.multiply(v, vector.new(0.5, 0.0, 3.0))
   |> should.equal(vector.new(1.0, -0.0, 3.0))
 }
+
+pub fn dot_product_test() {
+  vector.dot(vector.new(1.0, 2.0, 3.0), vector.new(-2.0, 1.0, 4.0))
+  |> should.equal(12.0)
+  vector.dot(vector.new(1.0, 0.0, 0.0), vector.new(0.0, 1.0, 0.0))
+  |> should.equal(0.0)
+}

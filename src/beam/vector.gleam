@@ -29,3 +29,7 @@ pub fn scale(a: Vec, amount: Float) -> Vec {
 pub fn multiply(a: Vec, b: Vec) -> Vec {
   Vec(a.x *. b.x, a.y *. b.y, a.z *. b.z)
 }
+
+pub fn dot(a: Vec, b: Vec) -> Float {
+  a.x *. b.x +. a.y *. b.y +. a.z *. b.z
+}

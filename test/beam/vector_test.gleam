@@ -31,3 +31,11 @@ pub fn dot_product_test() {
   vector.dot(vector.new(1.0, 0.0, 0.0), vector.new(0.0, 1.0, 0.0))
   |> should.equal(0.0)
 }
+
+pub fn cross_product_test() {
+  let x = vector.new(1.0, 0.0, 0.0)
+  let y = vector.new(0.0, 1.0, 0.0)
+  vector.cross(x, y) |> should.equal(vector.new(0.0, 0.0, 1.0))
+  vector.cross(y, x) |> should.equal(vector.new(0.0, 0.0, -1.0))
+  vector.cross(x, x) |> should.equal(vector.zero())
+}

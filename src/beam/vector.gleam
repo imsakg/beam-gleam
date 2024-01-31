@@ -33,3 +33,11 @@ pub fn multiply(a: Vec, b: Vec) -> Vec {
 pub fn dot(a: Vec, b: Vec) -> Float {
   a.x *. b.x +. a.y *. b.y +. a.z *. b.z
 }
+
+pub fn cross(a: Vec, b: Vec) -> Vec {
+  Vec(
+    a.y *. b.z -. a.z *. b.y,
+    a.z *. b.x -. a.x *. b.z,
+    a.x *. b.y -. a.y *. b.x,
+  )
+}

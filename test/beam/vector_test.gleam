@@ -39,3 +39,9 @@ pub fn cross_product_test() {
   vector.cross(y, x) |> should.equal(vector.new(0.0, 0.0, -1.0))
   vector.cross(x, x) |> should.equal(vector.zero())
 }
+
+pub fn length_test() {
+  vector.length_squared(vector.new(2.0, 3.0, 6.0)) |> should.equal(49.0)
+  vector.length(vector.new(2.0, 3.0, 6.0)) |> should.equal(7.0)
+  vector.length(vector.zero()) |> should.equal(0.0)
+}

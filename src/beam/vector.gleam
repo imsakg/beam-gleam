@@ -1,3 +1,6 @@
+import gleam/float
+import gleam/result
+
 pub type Vec {
   Vec(x: Float, y: Float, z: Float)
 }
@@ -40,4 +43,12 @@ pub fn cross(a: Vec, b: Vec) -> Vec {
     a.z *. b.x -. a.x *. b.z,
     a.x *. b.y -. a.y *. b.x,
   )
+}
+
+pub fn length_squared(a: Vec) -> Float {
+  dot(a, a)
+}
+
+pub fn length(a: Vec) -> Float {
+  float.square_root(length_squared(a)) |> result.unwrap(0.0)
 }

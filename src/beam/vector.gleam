@@ -52,3 +52,15 @@ pub fn length_squared(a: Vec) -> Float {
 pub fn length(a: Vec) -> Float {
   float.square_root(length_squared(a)) |> result.unwrap(0.0)
 }
+
+pub fn unit(a: Vec) -> Result(Vec, Nil) {
+  let len = length(a)
+  case len <. 0.000000000001 {
+    True -> Error(Nil)
+    False -> Ok(scale(a, 1.0 /. len))
+  }
+}
+
+pub fn unit_or_zero(a: Vec) -> Vec {
+  unit(a) |> result.unwrap(zero())
+}

@@ -1,3 +1,4 @@
+import assertions
 import beam/vector
 import gleeunit/should
 
@@ -44,4 +45,11 @@ pub fn length_test() {
   vector.length_squared(vector.new(2.0, 3.0, 6.0)) |> should.equal(49.0)
   vector.length(vector.new(2.0, 3.0, 6.0)) |> should.equal(7.0)
   vector.length(vector.zero()) |> should.equal(0.0)
+}
+
+pub fn normalization_test() {
+  vector.unit(vector.zero()) |> should.equal(Error(Nil))
+  let assert Ok(v) = vector.unit(vector.new(0.0, 3.0, 4.0))
+  assertions.close(vector.length(v), 1.0)
+  assertions.close(v.y, 0.6)
 }

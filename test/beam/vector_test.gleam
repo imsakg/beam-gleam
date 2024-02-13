@@ -53,3 +53,9 @@ pub fn normalization_test() {
   assertions.close(vector.length(v), 1.0)
   assertions.close(v.y, 0.6)
 }
+
+pub fn reflection_test() {
+  let incident = vector.new(1.0, -1.0, 0.0)
+  vector.reflect(incident, vector.new(0.0, 1.0, 0.0))
+  |> assertions.vector_close(vector.new(1.0, 1.0, 0.0))
+}

@@ -64,3 +64,8 @@ pub fn unit(a: Vec) -> Result(Vec, Nil) {
 pub fn unit_or_zero(a: Vec) -> Vec {
   unit(a) |> result.unwrap(zero())
 }
+
+/// The supplied normal must be a unit vector.
+pub fn reflect(direction: Vec, normal: Vec) -> Vec {
+  subtract(direction, scale(normal, 2.0 *. dot(direction, normal)))
+}

@@ -59,3 +59,14 @@ pub fn reflection_test() {
   vector.reflect(incident, vector.new(0.0, 1.0, 0.0))
   |> assertions.vector_close(vector.new(1.0, 1.0, 0.0))
 }
+
+pub fn refraction_test() {
+  let normal = vector.new(0.0, 1.0, 0.0)
+  let assert Ok(refracted) =
+    vector.refract(vector.new(0.0, -1.0, 0.0), normal, 1.0 /. 1.5)
+  assertions.vector_close(refracted, vector.new(0.0, -1.0, 0.0))
+  vector.refract(vector.new(0.9, -0.435889894, 0.0), normal, 1.5)
+  |> should.equal(Error(Nil))
+  vector.refract(vector.new(0.0, -1.0, 0.0), normal, -1.0)
+  |> should.equal(Error(Nil))
+}

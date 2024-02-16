@@ -69,3 +69,18 @@ pub fn unit_or_zero(a: Vec) -> Vec {
 pub fn reflect(direction: Vec, normal: Vec) -> Vec {
   subtract(direction, scale(normal, 2.0 *. dot(direction, normal)))
 }
+
+/// Direction and normal must be unit vectors; eta is n_incident / n_transmitted.
+pub fn refract(direction: Vec, normal: Vec, eta: Float) -> Result(Vec, Nil) {
+  let cosine = float.min(dot(negate(direction), normal), 1.0)
+  let perpendicular = scale(add(direction, scale(normal, cosine)), eta)
+  let parallel_squared = 1.0 -. length_squared(perpendicular)
+  case parallel_squared <. 0.0 || eta <=. 0.0 {
+    True -> Error(Nil)
+    False ->
+      Ok(subtract(
+        perpendicular,
+        scale(normal, float.square_root(parallel_squared) |> result.unwrap(0.0)),
+      ))
+  }
+}

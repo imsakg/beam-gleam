@@ -70,3 +70,10 @@ pub fn refraction_test() {
   vector.refract(vector.new(0.0, -1.0, 0.0), normal, -1.0)
   |> should.equal(Error(Nil))
 }
+
+pub fn rotation_test() {
+  vector.rotate_y(vector.new(1.0, 0.0, 0.0), 1.5707963267948966)
+  |> assertions.vector_close(vector.new(0.0, 0.0, -1.0))
+  let p = vector.new(1.0, 2.0, 3.0)
+  vector.rotate_y(vector.rotate_y(p, 0.4), -0.4) |> assertions.vector_close(p)
+}

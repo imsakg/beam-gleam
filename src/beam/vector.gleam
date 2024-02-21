@@ -1,3 +1,4 @@
+import beam/math
 import gleam/float
 import gleam/result
 
@@ -83,4 +84,10 @@ pub fn refract(direction: Vec, normal: Vec, eta: Float) -> Result(Vec, Nil) {
         scale(normal, float.square_root(parallel_squared) |> result.unwrap(0.0)),
       ))
   }
+}
+
+pub fn rotate_y(a: Vec, radians: Float) -> Vec {
+  let s = math.sine(radians)
+  let c = math.cosine(radians)
+  Vec(c *. a.x +. s *. a.z, a.y, c *. a.z -. s *. a.x)
 }

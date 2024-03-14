@@ -19,13 +19,12 @@ pub fn intersect(
   case discriminant <. 0.0 || radius <=. 0.0 || a <. 1.0e-24 {
     True -> Error(Nil)
     False -> {
-      let root =
-        {
-          0.0
-          -. half_b
-          -. { float.square_root(discriminant) |> result.unwrap(0.0) }
-        }
-        /. a
+      let sqrt_d = float.square_root(discriminant) |> result.unwrap(0.0)
+      let near = { 0.0 -. half_b -. sqrt_d } /. a
+      let root = case interval.surrounds(span, near) {
+        True -> near
+        False -> { 0.0 -. half_b +. sqrt_d } /. a
+      }
       case interval.surrounds(span, root) {
         False -> Error(Nil)
         True ->

@@ -30,3 +30,21 @@ pub fn inside_and_clipped_test() {
     )
   assertions.close(far.t, 4.0)
 }
+
+pub fn tangent_and_zero_direction_test() {
+  let assert Ok(tangent) =
+    sphere.intersect(
+      v.new(1.0, 0.0, -3.0),
+      1.0,
+      ray.Ray(v.zero(), v.new(0.0, 0.0, -1.0)),
+      interval.positive(),
+    )
+  assertions.close(tangent.t, 3.0)
+  sphere.intersect(
+    v.zero(),
+    1.0,
+    ray.Ray(v.zero(), v.zero()),
+    interval.positive(),
+  )
+  |> should.equal(Error(Nil))
+}

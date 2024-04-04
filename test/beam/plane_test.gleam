@@ -25,3 +25,16 @@ pub fn plane_test() {
   )
   |> should.equal(Error(Nil))
 }
+
+pub fn degenerate_and_behind_test() {
+  let r = ray.Ray(v.zero(), v.new(0.0, -1.0, 0.0))
+  plane.intersect(v.zero(), v.zero(), r, interval.positive())
+  |> should.equal(Error(Nil))
+  plane.intersect(
+    v.new(0.0, 1.0, 0.0),
+    v.new(0.0, 1.0, 0.0),
+    r,
+    interval.positive(),
+  )
+  |> should.equal(Error(Nil))
+}

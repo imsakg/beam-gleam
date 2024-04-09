@@ -23,3 +23,16 @@ pub fn triangle_test() {
   )
   |> should.equal(Error(Nil))
 }
+
+pub fn winding_and_edge_test() {
+  let a = v.new(-1.0, -1.0, -2.0)
+  let b = v.new(1.0, -1.0, -2.0)
+  let c = v.new(0.0, 1.0, -2.0)
+  let r = ray.Ray(v.new(0.0, -1.0, 0.0), v.new(0.0, 0.0, -1.0))
+  let assert Ok(edge) = triangle.intersect(a, b, c, r, interval.positive())
+  assertions.close(edge.u, 0.5)
+  let assert Ok(reverse) = triangle.intersect(c, b, a, r, interval.positive())
+  assertions.close(reverse.t, edge.t)
+  triangle.intersect(a, a, c, r, interval.positive())
+  |> should.equal(Error(Nil))
+}

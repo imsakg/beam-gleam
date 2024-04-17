@@ -21,3 +21,13 @@ pub fn cylinder_sides_test() {
   )
   |> should.equal(Error(Nil))
 }
+
+pub fn cylinder_cap_test() {
+  let r = ray.Ray(v.new(0.25, 4.0, 0.0), v.new(0.0, -1.0, 0.0))
+  let assert Ok(h) =
+    cylinder.intersect(v.zero(), 1.0, 2.0, True, r, interval.positive())
+  assertions.close(h.t, 2.0)
+  assertions.vector_close(h.normal, v.new(0.0, 1.0, 0.0))
+  cylinder.intersect(v.zero(), 1.0, 2.0, False, r, interval.positive())
+  |> should.equal(Error(Nil))
+}

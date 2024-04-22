@@ -13,6 +13,20 @@ pub fn intersect(
   r: Ray,
   span: Interval,
 ) -> Result(Hit, Nil) {
+  case radius <=. 0.0 || height <=. 0.0 {
+    True -> Error(Nil)
+    False -> valid_intersect(center, radius, height, closed, r, span)
+  }
+}
+
+fn valid_intersect(
+  center: Vec,
+  radius: Float,
+  height: Float,
+  closed: Bool,
+  r: Ray,
+  span: Interval,
+) -> Result(Hit, Nil) {
   let side_hit = side(center, radius, height, r, span)
   case closed {
     False -> side_hit

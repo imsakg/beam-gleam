@@ -31,3 +31,13 @@ pub fn cylinder_cap_test() {
   cylinder.intersect(v.zero(), 1.0, 2.0, False, r, interval.positive())
   |> should.equal(Error(Nil))
 }
+
+pub fn invalid_cylinder_test() {
+  let r = ray.Ray(v.new(0.0, 4.0, 0.0), v.new(0.0, -1.0, 0.0))
+  cylinder.intersect(v.zero(), -1.0, 2.0, True, r, interval.positive())
+  |> should.equal(Error(Nil))
+  cylinder.intersect(v.zero(), 1.0, -2.0, True, r, interval.positive())
+  |> should.equal(Error(Nil))
+  cylinder.intersect(v.zero(), 0.0, 2.0, True, r, interval.positive())
+  |> should.equal(Error(Nil))
+}

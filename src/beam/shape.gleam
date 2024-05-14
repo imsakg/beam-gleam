@@ -11,6 +11,7 @@ import beam/triangle
 import beam/vector.{type Vec}
 
 pub type Shape {
+  Translated(shape: Shape, offset: Vec)
   Sphere(center: Vec, radius: Float)
   Plane(point: Vec, normal: Vec)
   Triangle(a: Vec, b: Vec, c: Vec)
@@ -32,6 +33,13 @@ pub fn intersect(shape: Shape, r: Ray, span: Interval) -> Result(Hit, Nil) {
 
 fn intersect_raw(shape: Shape, r: Ray, span: Interval) -> Result(Hit, Nil) {
   case shape {
+    Translated(child, offset) -> {
+      let local = ray.Ray(vector.subtract(r.origin, offset), r.direction)
+      case intersect(child, local, span) {
+        Ok(h) -> Ok(hit.Hit(..h, point: vector.add(h.point, offset)))
+        Error(_) -> Error(Nil)
+      }
+    }
     Sphere(c, radius) -> sphere.intersect(c, radius, r, span)
     Plane(p, n) -> plane.intersect(p, n, r, span)
     Triangle(a, b, c) -> triangle.intersect(a, b, c, r, span)

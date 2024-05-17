@@ -34,3 +34,16 @@ pub fn translated_hit_test() {
   assertions.close(h.t, 2.0)
   assertions.vector_close(h.point, v.new(0.0, 0.0, -2.0))
 }
+
+pub fn rotated_hit_test() {
+  let primitive =
+    shape.RotatedY(shape.Sphere(v.new(2.0, 0.0, 0.0), 0.5), 1.5707963267948966)
+  let assert Ok(h) =
+    shape.intersect(
+      primitive,
+      ray.Ray(v.zero(), v.new(0.0, 0.0, -1.0)),
+      interval.positive(),
+    )
+  assertions.close(h.t, 1.5)
+  assertions.vector_close(h.normal, v.new(0.0, 0.0, 1.0))
+}

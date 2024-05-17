@@ -11,6 +11,7 @@ import beam/triangle
 import beam/vector.{type Vec}
 
 pub type Shape {
+  RotatedY(shape: Shape, radians: Float)
   Translated(shape: Shape, offset: Vec)
   Sphere(center: Vec, radius: Float)
   Plane(point: Vec, normal: Vec)
@@ -33,6 +34,24 @@ pub fn intersect(shape: Shape, r: Ray, span: Interval) -> Result(Hit, Nil) {
 
 fn intersect_raw(shape: Shape, r: Ray, span: Interval) -> Result(Hit, Nil) {
   case shape {
+    RotatedY(child, angle) -> {
+      let local =
+        ray.Ray(
+          vector.rotate_y(r.origin, 0.0 -. angle),
+          vector.rotate_y(r.direction, 0.0 -. angle),
+        )
+      case intersect(child, local, span) {
+        Ok(h) ->
+          Ok(
+            hit.Hit(
+              ..h,
+              point: vector.rotate_y(h.point, angle),
+              normal: vector.rotate_y(h.normal, angle),
+            ),
+          )
+        Error(_) -> Error(Nil)
+      }
+    }
     Translated(child, offset) -> {
       let local = ray.Ray(vector.subtract(r.origin, offset), r.direction)
       case intersect(child, local, span) {

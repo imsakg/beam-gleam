@@ -16,3 +16,11 @@ pub fn nearest_surface_test() {
   assertions.close(a.t, b.t)
   world.intersect([], r, interval.positive()) |> should.equal(Error(Nil))
 }
+
+pub fn finite_visibility_test() {
+  let object = shape.Sphere(v.new(0.0, 0.0, -3.0), 1.0)
+  let r = ray.Ray(v.zero(), v.new(0.0, 0.0, -1.0))
+  world.occluded([object], r, 1.5) |> should.be_false
+  world.occluded([object], r, 5.0) |> should.be_true
+  world.occluded([], r, 5.0) |> should.be_false
+}

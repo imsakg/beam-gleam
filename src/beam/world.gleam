@@ -20,3 +20,13 @@ pub fn intersect(
     }
   })
 }
+
+/// Ray direction must be unit length when max_distance is a world-space distance.
+pub fn occluded(objects: List(Shape), r: Ray, max_distance: Float) -> Bool {
+  list.any(objects, fn(object) {
+    case shape.intersect(object, r, interval.Interval(0.0001, max_distance)) {
+      Ok(_) -> True
+      Error(_) -> False
+    }
+  })
+}

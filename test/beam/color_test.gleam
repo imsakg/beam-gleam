@@ -8,3 +8,10 @@ pub fn linear_color_test() {
   color.mix(color.black(), color.white(), 0.25)
   |> assertions.vector_close(v.new(0.25, 0.25, 0.25))
 }
+
+pub fn gamma_test() {
+  color.gamma(v.new(0.25, -1.0, 1.0), 2.0)
+  |> assertions.vector_close(v.new(0.5, 0.0, 1.0))
+  color.gamma(v.new(0.25, 0.5, 1.0), 0.0)
+  |> assertions.vector_close(v.new(0.25, 0.5, 1.0))
+}

@@ -15,3 +15,10 @@ pub fn gamma_test() {
   color.gamma(v.new(0.25, 0.5, 1.0), 0.0)
   |> assertions.vector_close(v.new(0.25, 0.5, 1.0))
 }
+
+pub fn exposure_and_tone_test() {
+  color.expose(v.new(0.25, 0.5, 1.0), 1.0)
+  |> assertions.vector_close(v.new(0.5, 1.0, 2.0))
+  color.reinhard(v.new(1.0, 3.0, -1.0))
+  |> assertions.vector_close(v.new(0.5, 0.75, 0.0))
+}

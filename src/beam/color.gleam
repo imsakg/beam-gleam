@@ -41,3 +41,16 @@ pub fn gamma(c: Color, gamma: Float) -> Color {
 fn transfer(value: Float, exponent: Float) -> Float {
   float.power(float.max(0.0, value), exponent) |> result.unwrap(0.0)
 }
+
+pub fn expose(c: Color, stops: Float) -> Color {
+  vector.scale(c, float.power(2.0, stops) |> result.unwrap(1.0))
+}
+
+pub fn reinhard(c: Color) -> Color {
+  vector.new(tone(c.x), tone(c.y), tone(c.z))
+}
+
+fn tone(value: Float) -> Float {
+  let positive = float.max(0.0, value)
+  positive /. { 1.0 +. positive }
+}

@@ -34,3 +34,14 @@ pub fn stripe_and_gradient_test() {
   )
   |> assertions.vector_close(v.new(0.25, 0.0, 0.75))
 }
+
+pub fn image_test() {
+  let red = v.new(1.0, 0.0, 0.0)
+  let blue = v.new(0.0, 0.0, 1.0)
+  let assert Ok(image) = texture.image(2, 2, [red, blue, blue, red])
+  texture.value(image, v.zero(), 0.0, 1.0) |> assertions.vector_close(red)
+  texture.value(image, v.zero(), 2.0, -1.0) |> assertions.vector_close(red)
+  texture.value(image, v.zero(), 1.0, 1.0) |> assertions.vector_close(blue)
+  texture.image(2, 2, [red]) |> should.equal(Error(Nil))
+  texture.image(0, 1, []) |> should.equal(Error(Nil))
+}

@@ -48,3 +48,19 @@ pub fn tangent_and_zero_direction_test() {
   )
   |> should.equal(Error(Nil))
 }
+
+pub fn spherical_uv_test() {
+  let equator = sphere.uv(v.new(1.0, 0.0, 0.0))
+  assertions.close(equator.0, 0.5)
+  assertions.close(equator.1, 0.5)
+  assertions.close(sphere.uv(v.new(0.0, 1.0, 0.0)).1, 1.0)
+  let assert Ok(h) =
+    sphere.intersect(
+      v.new(0.0, 0.0, -3.0),
+      1.0,
+      ray.Ray(v.zero(), v.new(0.0, 0.0, -1.0)),
+      interval.positive(),
+    )
+  assertions.close(h.v, 0.5)
+  assertions.close(h.u, 0.25)
+}

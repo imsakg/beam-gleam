@@ -5,6 +5,7 @@ import beam/texture
 import beam/vector.{type Vec}
 import gleam/float
 import gleam/list
+import gleam/result
 
 pub fn shade(surface: Surface, h: Hit, view: Vec, lights: List(Light)) -> Vec {
   let _ = view
@@ -17,6 +18,16 @@ pub fn shade(surface: Surface, h: Hit, view: Vec, lights: List(Light)) -> Vec {
         vector.multiply(base, sample.radiance),
         surface.diffuse *. cosine,
       )
-    vector.add(acc, diffuse)
+    let reflected = vector.reflect(vector.negate(sample.towards), h.normal)
+    let alignment =
+      float.max(0.0, vector.dot(vector.unit_or_zero(view), reflected))
+    let power =
+      float.power(alignment, float.max(1.0, surface.shininess))
+      |> result.unwrap(0.0)
+    let specular = case cosine >. 0.0 {
+      True -> vector.scale(sample.radiance, surface.specular *. power)
+      False -> vector.zero()
+    }
+    vector.add(acc, vector.add(diffuse, specular))
   })
 }

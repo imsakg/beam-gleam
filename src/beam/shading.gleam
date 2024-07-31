@@ -23,36 +23,40 @@ pub fn shade_visible(
 ) -> Vec {
   let _ = view
   let base = texture.value(surface.texture, h.point, h.u, h.v)
-  list.fold(lights, vector.scale(base, surface.ambient), fn(acc, source) {
-    let raw_sample = light.sample(source, h.point)
-    let blocked =
-      world.occluded(
-        scene.geometry(objects),
-        ray.Ray(offset_origin(h, raw_sample.towards), raw_sample.towards),
-        raw_sample.distance -. 0.0002,
-      )
-    let sample = case blocked {
-      True -> light.Sample(..raw_sample, radiance: vector.zero())
-      False -> raw_sample
-    }
-    let cosine = float.max(0.0, vector.dot(h.normal, sample.towards))
-    let diffuse =
-      vector.scale(
-        vector.multiply(base, sample.radiance),
-        surface.diffuse *. cosine,
-      )
-    let reflected = vector.reflect(vector.negate(sample.towards), h.normal)
-    let alignment =
-      float.max(0.0, vector.dot(vector.unit_or_zero(view), reflected))
-    let power =
-      float.power(alignment, float.max(1.0, surface.shininess))
-      |> result.unwrap(0.0)
-    let specular = case cosine >. 0.0 {
-      True -> vector.scale(sample.radiance, surface.specular *. power)
-      False -> vector.zero()
-    }
-    vector.add(acc, vector.add(diffuse, specular))
-  })
+  list.fold(
+    lights,
+    vector.add(surface.emission, vector.scale(base, surface.ambient)),
+    fn(acc, source) {
+      let raw_sample = light.sample(source, h.point)
+      let blocked =
+        world.occluded(
+          scene.geometry(objects),
+          ray.Ray(offset_origin(h, raw_sample.towards), raw_sample.towards),
+          raw_sample.distance -. 0.0002,
+        )
+      let sample = case blocked {
+        True -> light.Sample(..raw_sample, radiance: vector.zero())
+        False -> raw_sample
+      }
+      let cosine = float.max(0.0, vector.dot(h.normal, sample.towards))
+      let diffuse =
+        vector.scale(
+          vector.multiply(base, sample.radiance),
+          surface.diffuse *. cosine,
+        )
+      let reflected = vector.reflect(vector.negate(sample.towards), h.normal)
+      let alignment =
+        float.max(0.0, vector.dot(vector.unit_or_zero(view), reflected))
+      let power =
+        float.power(alignment, float.max(1.0, surface.shininess))
+        |> result.unwrap(0.0)
+      let specular = case cosine >. 0.0 {
+        True -> vector.scale(sample.radiance, surface.specular *. power)
+        False -> vector.zero()
+      }
+      vector.add(acc, vector.add(diffuse, specular))
+    },
+  )
 }
 
 pub fn offset_origin(h: Hit, direction: Vec) -> Vec {

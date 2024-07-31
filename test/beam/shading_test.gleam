@@ -75,3 +75,15 @@ pub fn hard_shadow_test() {
   shading.shade_visible([behind], surface, h, v.new(0.0, 0.0, 1.0), [source])
   |> assertions.vector_close(v.new(1.0, 1.0, 1.0))
 }
+
+pub fn self_lit_test() {
+  let surface = material.emissive(v.new(1.0, 0.25, 0.0), 2.0)
+  let h =
+    hit.make(
+      ray.Ray(v.zero(), v.new(0.0, 0.0, -1.0)),
+      1.0,
+      v.new(0.0, 0.0, 1.0),
+    )
+  shading.shade(surface, h, v.new(0.0, 0.0, 1.0), [])
+  |> assertions.vector_close(v.new(2.0, 0.5, 0.0))
+}

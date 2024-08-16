@@ -1,4 +1,5 @@
 import beam/math
+import beam/ray
 import beam/vector.{type Vec}
 
 pub type Basis {
@@ -44,4 +45,20 @@ pub fn look_at(
       Ok(Camera(origin, lower, horizontal, vertical))
     }
   }
+}
+
+/// u increases left to right; v increases bottom to top.
+pub fn ray(camera: Camera, u: Float, v: Float) -> ray.Ray {
+  let point =
+    vector.add(
+      camera.lower_left,
+      vector.add(
+        vector.scale(camera.horizontal, u),
+        vector.scale(camera.vertical, v),
+      ),
+    )
+  ray.Ray(
+    camera.origin,
+    vector.unit_or_zero(vector.subtract(point, camera.origin)),
+  )
 }

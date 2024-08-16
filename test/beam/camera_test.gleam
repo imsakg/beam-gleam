@@ -26,3 +26,19 @@ pub fn field_of_view_test() {
   assertions.close(v.length(c.vertical), 2.0)
   assertions.vector_close(c.lower_left, v.new(-2.0, -1.0, -1.0))
 }
+
+pub fn primary_ray_test() {
+  let assert Ok(c) =
+    camera.look_at(
+      v.zero(),
+      v.new(0.0, 0.0, -1.0),
+      v.new(0.0, 1.0, 0.0),
+      90.0,
+      1.0,
+    )
+  assertions.vector_close(
+    camera.ray(c, 0.5, 0.5).direction,
+    v.new(0.0, 0.0, -1.0),
+  )
+  assertions.close(v.length(camera.ray(c, 0.0, 1.0).direction), 1.0)
+}

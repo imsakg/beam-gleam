@@ -42,3 +42,15 @@ pub fn primary_ray_test() {
   )
   assertions.close(v.length(camera.ray(c, 0.0, 1.0).direction), 1.0)
 }
+
+pub fn invalid_perspective_test() {
+  let origin = v.zero()
+  let target = v.new(0.0, 0.0, -1.0)
+  let up = v.new(0.0, 1.0, 0.0)
+  camera.look_at(origin, target, up, 180.0, 1.0)
+  |> should.equal(Error("field of view must be between 0 and 180 degrees"))
+  camera.look_at(origin, target, up, 60.0, 0.0)
+  |> should.equal(Error("aspect ratio must be positive"))
+  camera.basis(origin, target, v.new(0.0, 0.0, 1.0))
+  |> should.equal(Error("camera up is parallel to view"))
+}

@@ -28,6 +28,23 @@ pub fn look_at(
   vfov: Float,
   aspect: Float,
 ) -> Result(Camera, String) {
+  case vfov <=. 0.0 || vfov >=. 180.0 {
+    True -> Error("field of view must be between 0 and 180 degrees")
+    False ->
+      case aspect <=. 0.0 {
+        True -> Error("aspect ratio must be positive")
+        False -> valid_look_at(origin, target, up, vfov, aspect)
+      }
+  }
+}
+
+fn valid_look_at(
+  origin: Vec,
+  target: Vec,
+  up: Vec,
+  vfov: Float,
+  aspect: Float,
+) -> Result(Camera, String) {
   case basis(origin, target, up) {
     Error(e) -> Error(e)
     Ok(frame) -> {

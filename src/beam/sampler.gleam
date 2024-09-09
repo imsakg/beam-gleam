@@ -34,3 +34,13 @@ fn jitter_loop(
     }
   }
 }
+
+pub fn stratified(side: Int, seed: Int) -> List(#(Float, Float)) {
+  jitter(side * side, seed)
+  |> list.index_map(fn(p, i) {
+    #(
+      { int.to_float(i % side) +. p.0 } /. int.to_float(side),
+      { int.to_float(i / side) +. p.1 } /. int.to_float(side),
+    )
+  })
+}

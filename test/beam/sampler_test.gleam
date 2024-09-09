@@ -1,5 +1,7 @@
 import assertions
 import beam/sampler
+import gleam/float
+import gleam/int
 import gleam/list
 import gleeunit/should
 
@@ -19,4 +21,14 @@ pub fn seeded_jitter_test() {
   })
   sampler.jitter(0, 123) |> should.equal([])
   should.not_equal(samples, sampler.jitter(8, 124))
+}
+
+pub fn stratified_cells_test() {
+  let points = sampler.stratified(3, 42)
+  list.length(points) |> should.equal(9)
+  list.index_map(points, fn(p, i) {
+    assertions.close(float.floor(p.0 *. 3.0), int.to_float(i % 3))
+    assertions.close(float.floor(p.1 *. 3.0), int.to_float(i / 3))
+  })
+  sampler.stratified(1, 42) |> should.equal(sampler.jitter(1, 42))
 }

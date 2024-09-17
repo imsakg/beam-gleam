@@ -1,3 +1,4 @@
+import beam/background.{type Background}
 import beam/color
 import beam/interval
 import beam/light.{type Light}
@@ -13,11 +14,21 @@ pub fn trace(
   r: Ray,
   depth: Int,
 ) -> Vec {
+  trace_background(objects, lights, r, depth, background.Solid(color.black()))
+}
+
+pub fn trace_background(
+  objects: List(Object),
+  lights: List(Light),
+  r: Ray,
+  depth: Int,
+  environment: Background,
+) -> Vec {
   case depth <= 0 {
     True -> color.black()
     False ->
       case scene.intersect(objects, r, interval.positive()) {
-        Error(_) -> color.black()
+        Error(_) -> background.sample(environment, r.direction)
         Ok(c) -> {
           let base =
             shading.shade_visible(
@@ -37,7 +48,13 @@ pub fn trace(
                 ray.Ray(shading.offset_origin(c.hit, direction), direction)
               color.mix(
                 base,
-                trace(objects, lights, reflected, depth - 1),
+                trace_background(
+                  objects,
+                  lights,
+                  reflected,
+                  depth - 1,
+                  environment,
+                ),
                 amount,
               )
             }

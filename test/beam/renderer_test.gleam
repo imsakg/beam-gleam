@@ -56,3 +56,26 @@ pub fn edge_antialiasing_test() {
   let assert Ok(blended) = list.first(aa.pixels)
   assertions.vector_close(blended, v.new(0.5, 0.5, 0.5))
 }
+
+pub fn seeded_render_test() {
+  let options =
+    renderer.Settings(
+      ..renderer.defaults(),
+      width: 4,
+      height: 4,
+      samples: 5,
+      sampling: renderer.Jitter,
+    )
+  let objects = [
+    scene.Object(
+      shape.Sphere(v.new(0.0, 0.0, -3.0), 1.0),
+      material.emissive(v.new(1.0, 0.0, 0.0), 1.0),
+    ),
+  ]
+  renderer.render_with(options, camera(), objects, [])
+  |> should.equal(renderer.render_with(options, camera(), objects, []))
+  renderer.validate(
+    renderer.Settings(..options, samples: 5, sampling: renderer.Grid),
+  )
+  |> should.equal(Error("grid sampling requires a square sample count"))
+}

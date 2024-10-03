@@ -1,6 +1,7 @@
 import beam/background
 import beam/camera.{type Camera}
 import beam/framebuffer.{type Frame}
+import beam/interval
 import beam/light.{type Light}
 import beam/ray
 import beam/sampler
@@ -78,6 +79,12 @@ pub type Sampling {
   Stratified
 }
 
+pub type View {
+  Lit
+  Normals
+  Depth
+}
+
 pub type Settings {
   Settings(
     width: Int,
@@ -87,6 +94,7 @@ pub type Settings {
     seed: Int,
     sampling: Sampling,
     environment: background.Background,
+    view: View,
   )
 }
 
@@ -99,6 +107,7 @@ pub fn defaults() -> Settings {
     42,
     Stratified,
     background.Sky(vector.new(1.0, 1.0, 1.0), vector.new(0.4, 0.65, 1.0)),
+    Lit,
   )
 }
 
@@ -128,15 +137,7 @@ pub fn render_with(
             settings.width,
             settings.height,
             offsets,
-            fn(r) {
-              tracer.trace_background(
-                objects,
-                lights,
-                r,
-                settings.depth,
-                settings.environment,
-              )
-            },
+            fn(r) { shade_ray(settings, objects, lights, r) },
           )
         })
       framebuffer.create(settings.width, settings.height, pixels)
@@ -177,6 +178,38 @@ pub fn validate(settings: Settings) -> Result(Nil, String) {
             False -> Error("grid sampling requires a square sample count")
           }
         Jitter -> Ok(Nil)
+      }
+  }
+}
+
+fn shade_ray(
+  settings: Settings,
+  objects: List(Object),
+  lights: List(Light),
+  r: ray.Ray,
+) -> Vec {
+  case settings.view {
+    Lit ->
+      tracer.trace_background(
+        objects,
+        lights,
+        r,
+        settings.depth,
+        settings.environment,
+      )
+    Normals | Depth ->
+      case scene.intersect(objects, r, interval.positive()) {
+        Error(_) -> vector.zero()
+        Ok(c) ->
+          case settings.view {
+            Normals ->
+              vector.scale(
+                vector.add(c.hit.normal, vector.new(1.0, 1.0, 1.0)),
+                0.5,
+              )
+            _ ->
+              vector.scale(vector.new(1.0, 1.0, 1.0), 1.0 /. { 1.0 +. c.hit.t })
+          }
       }
   }
 }

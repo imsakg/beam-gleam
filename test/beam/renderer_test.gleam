@@ -79,3 +79,38 @@ pub fn seeded_render_test() {
   )
   |> should.equal(Error("grid sampling requires a square sample count"))
 }
+
+pub fn diagnostic_views_test() {
+  let base =
+    renderer.Settings(
+      ..renderer.defaults(),
+      width: 1,
+      height: 1,
+      samples: 1,
+      sampling: renderer.Center,
+    )
+  let objects = [
+    scene.Object(
+      shape.Sphere(v.new(0.0, 0.0, -3.0), 1.0),
+      material.emissive(v.zero(), 0.0),
+    ),
+  ]
+  let assert Ok(normals) =
+    renderer.render_with(
+      renderer.Settings(..base, view: renderer.Normals),
+      camera(),
+      objects,
+      [],
+    )
+  let assert Ok(n) = list.first(normals.pixels)
+  assertions.vector_close(n, v.new(0.5, 0.5, 1.0))
+  let assert Ok(depth) =
+    renderer.render_with(
+      renderer.Settings(..base, view: renderer.Depth),
+      camera(),
+      objects,
+      [],
+    )
+  let assert Ok(d) = list.first(depth.pixels)
+  assertions.close(d.x, 1.0 /. 3.0)
+}

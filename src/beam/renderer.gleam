@@ -159,6 +159,20 @@ fn sample_offsets(settings: Settings, seed: Int) -> List(#(Float, Float)) {
 }
 
 pub fn validate(settings: Settings) -> Result(Nil, String) {
+  case
+    settings.width > 4096
+    || settings.height > 4096
+    || settings.depth < 1
+    || settings.depth > 32
+    || settings.samples > 256
+    || settings.width * settings.height * settings.samples > 8_388_608
+  {
+    True -> Error("render exceeds resource limits")
+    False -> validate_sampling(settings)
+  }
+}
+
+fn validate_sampling(settings: Settings) -> Result(Nil, String) {
   let side =
     float.square_root(int.to_float(settings.samples))
     |> result.unwrap(0.0)

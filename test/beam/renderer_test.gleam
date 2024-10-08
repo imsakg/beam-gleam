@@ -114,3 +114,14 @@ pub fn diagnostic_views_test() {
   let assert Ok(d) = list.first(depth.pixels)
   assertions.close(d.x, 1.0 /. 3.0)
 }
+
+pub fn resource_budget_test() {
+  renderer.validate(renderer.Settings(..renderer.defaults(), width: 8192))
+  |> should.equal(Error("render exceeds resource limits"))
+  renderer.validate(renderer.Settings(..renderer.defaults(), depth: 100))
+  |> should.equal(Error("render exceeds resource limits"))
+  renderer.validate(renderer.Settings(..renderer.defaults(), samples: 1024))
+  |> should.equal(Error("render exceeds resource limits"))
+  renderer.validate(renderer.Settings(..renderer.defaults(), depth: 0))
+  |> should.equal(Error("render exceeds resource limits"))
+}

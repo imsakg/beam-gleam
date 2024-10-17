@@ -5,6 +5,8 @@ import beam/scene.{type Object}
 import beam/shape
 import beam/texture
 import beam/vector.{type Vec}
+import gleam/int
+import gleam/list
 
 pub type Preset {
   Preset(
@@ -85,5 +87,65 @@ pub fn demo() -> Preset {
     vector.new(0.0, 0.1, -2.0),
     45.0,
     background.Sky(vector.new(0.9, 0.95, 1.0), vector.new(0.25, 0.5, 0.9)),
+  )
+}
+
+pub fn load(name: String) -> Result(Preset, String) {
+  case name {
+    "primitives" | "demo" -> Ok(demo())
+    "textures" -> Ok(textures())
+    "mirrors" -> {
+      let scene = demo()
+      Ok(
+        Preset(
+          ..scene,
+          objects: list.map(scene.objects, fn(o) {
+            scene.Object(
+              ..o,
+              surface: material.Surface(..o.surface, reflectivity: 0.65),
+            )
+          }),
+        ),
+      )
+    }
+    _ -> Error("unknown scene: " <> name)
+  }
+}
+
+pub fn textures() -> Preset {
+  let base = demo()
+  let a = vector.new(0.9, 0.1, 0.05)
+  let b = vector.new(0.05, 0.3, 0.95)
+  let materials = [
+    texture.Checker(a, b, 3.0),
+    texture.Stripe(a, b, 4.0),
+    texture.Gradient(a, b, 1.0),
+    texture.Image(2, 2, [a, b, vector.new(1.0, 1.0, 1.0), vector.zero()]),
+  ]
+  let spheres =
+    list.index_map(materials, fn(t, i) {
+      scene.Object(
+        shape.Sphere(
+          vector.new(int.to_float(i) *. 2.1 -. 3.15, 0.0, -2.0),
+          0.95,
+        ),
+        material.shiny(t),
+      )
+    })
+  Preset(
+    ..base,
+    objects: [
+      scene.Object(
+        shape.Plane(vector.new(0.0, -1.0, 0.0), vector.new(0.0, 1.0, 0.0)),
+        material.matte(texture.Checker(
+          vector.new(0.8, 0.8, 0.8),
+          vector.new(0.2, 0.2, 0.2),
+          1.0,
+        )),
+      ),
+      ..spheres
+    ],
+    eye: vector.new(4.0, 2.0, 9.0),
+    target: vector.new(0.0, 0.0, -2.0),
   )
 }

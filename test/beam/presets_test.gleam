@@ -29,3 +29,11 @@ pub fn demo_render_test() {
     renderer.render_with(options, camera, scene.objects, scene.lights)
   list.length(frame.pixels) |> should.equal(72)
 }
+
+pub fn named_presets_test() {
+  let assert Ok(textures) = presets.load("textures")
+  list.length(textures.objects) |> should.equal(5)
+  let assert Ok(mirrors) = presets.load("mirrors")
+  list.length(mirrors.objects) |> should.equal(8)
+  presets.load("missing") |> should.equal(Error("unknown scene: missing"))
+}

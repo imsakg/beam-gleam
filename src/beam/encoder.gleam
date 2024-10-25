@@ -45,3 +45,19 @@ pub fn p3(frame: Frame, options: Encoding) -> BitArray {
 255
 " <> rows)
 }
+
+pub fn rgb_bytes(frame: Frame, options: Encoding) -> BitArray {
+  list.map(frame.pixels, fn(p) {
+    let c = rgb(p, options)
+    <<c.0, c.1, c.2>>
+  })
+  |> bit_array.concat
+}
+
+pub fn p6(frame: Frame, options: Encoding) -> BitArray {
+  let header = bit_array.from_string("P6
+" <> dimensions(frame) <> "
+255
+")
+  <<header:bits, rgb_bytes(frame, options):bits>>
+}

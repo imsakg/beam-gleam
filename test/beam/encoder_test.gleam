@@ -22,3 +22,19 @@ pub fn ascii_ppm_test() {
 ",
   ))
 }
+
+pub fn binary_ppm_test() {
+  encoder.p6(image(), encoder.Encoding(1.0, 0.0, False))
+  |> should.equal(<<
+    "P6
+2 1
+255
+":utf8,
+    255,
+    0,
+    0,
+    0,
+    255,
+    0,
+  >>)
+}

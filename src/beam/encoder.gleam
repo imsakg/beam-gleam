@@ -61,3 +61,15 @@ pub fn p6(frame: Frame, options: Encoding) -> BitArray {
 ")
   <<header:bits, rgb_bytes(frame, options):bits>>
 }
+
+pub fn pam(frame: Frame, options: Encoding) -> BitArray {
+  let header = bit_array.from_string("P7
+WIDTH " <> int.to_string(frame.width) <> "
+HEIGHT " <> int.to_string(frame.height) <> "
+DEPTH 3
+MAXVAL 255
+TUPLTYPE RGB
+ENDHDR
+")
+  <<header:bits, rgb_bytes(frame, options):bits>>
+}

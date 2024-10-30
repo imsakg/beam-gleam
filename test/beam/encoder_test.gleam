@@ -38,3 +38,23 @@ pub fn binary_ppm_test() {
     0,
   >>)
 }
+
+pub fn pam_test() {
+  encoder.pam(image(), encoder.Encoding(1.0, 0.0, False))
+  |> should.equal(<<
+    "P7
+WIDTH 2
+HEIGHT 1
+DEPTH 3
+MAXVAL 255
+TUPLTYPE RGB
+ENDHDR
+":utf8,
+    255,
+    0,
+    0,
+    0,
+    255,
+    0,
+  >>)
+}

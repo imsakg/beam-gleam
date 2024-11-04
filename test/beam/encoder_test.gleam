@@ -58,3 +58,11 @@ ENDHDR
     0,
   >>)
 }
+
+pub fn bmp_padding_test() {
+  let bytes = encoder.bmp(image(), encoder.Encoding(1.0, 0.0, False))
+  bit_array.byte_size(bytes) |> should.equal(62)
+  bit_array.slice(bytes, 0, 2) |> should.equal(Ok(<<66, 77>>))
+  bit_array.slice(bytes, 54, 8)
+  |> should.equal(Ok(<<0, 0, 255, 0, 255, 0, 0, 0>>))
+}

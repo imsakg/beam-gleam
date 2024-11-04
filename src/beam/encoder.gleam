@@ -73,3 +73,45 @@ ENDHDR
 ")
   <<header:bits, rgb_bytes(frame, options):bits>>
 }
+
+pub fn bmp(frame: Frame, options: Encoding) -> BitArray {
+  let padding = { 4 - { frame.width * 3 } % 4 } % 4
+  let image_size = { frame.width * 3 + padding } * frame.height
+  let size = 54 + image_size
+  let file_header = <<
+    66,
+    77,
+    size:size(32)-little,
+    0:size(32),
+    54:size(32)-little,
+  >>
+  let info = <<
+    40:size(32)-little,
+    frame.width:size(32)-little,
+    frame.height:size(32)-little,
+    1:size(16)-little,
+    24:size(16)-little,
+    0:size(32),
+    image_size:size(32)-little,
+    2835:size(32)-little,
+    2835:size(32)-little,
+    0:size(32),
+    0:size(32),
+  >>
+  let pad = list.repeat(<<0>>, padding) |> bit_array.concat
+  let pixels =
+    frame.pixels
+    |> list.sized_chunk(frame.width)
+    |> list.reverse
+    |> list.map(fn(row) {
+      let data =
+        list.map(row, fn(p) {
+          let c = rgb(p, options)
+          <<c.2, c.1, c.0>>
+        })
+        |> bit_array.concat
+      <<data:bits, pad:bits>>
+    })
+    |> bit_array.concat
+  <<file_header:bits, info:bits, pixels:bits>>
+}

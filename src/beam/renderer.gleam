@@ -33,6 +33,16 @@ pub fn sampled(
   depth: Int,
   offsets: List(#(Float, Float)),
 ) -> Result(Frame, String) {
+  use _ <- result.try(validate(
+    Settings(
+      ..defaults(),
+      width: width,
+      height: height,
+      depth: depth,
+      samples: list.length(offsets),
+      sampling: Jitter,
+    ),
+  ))
   case width <= 0 || height <= 0 || list.is_empty(offsets) {
     True -> Error("dimensions and sample count must be positive")
     False -> {

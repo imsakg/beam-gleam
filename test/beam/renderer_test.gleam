@@ -125,3 +125,12 @@ pub fn resource_budget_test() {
   renderer.validate(renderer.Settings(..renderer.defaults(), depth: 0))
   |> should.equal(Error("render exceeds resource limits"))
 }
+
+pub fn public_api_budget_test() {
+  renderer.render(camera(), [], [], 4097, 1, 1)
+  |> should.equal(Error("render exceeds resource limits"))
+  renderer.render(camera(), [], [], 1, 1, 0)
+  |> should.equal(Error("render exceeds resource limits"))
+  renderer.sampled(camera(), [], [], 1, 1, 2, list.repeat(#(0.5, 0.5), 257))
+  |> should.equal(Error("render exceeds resource limits"))
+}

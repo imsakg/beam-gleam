@@ -43,6 +43,14 @@ pub fn sampled(
       sampling: Jitter,
     ),
   ))
+  let valid_offsets =
+    list.all(offsets, fn(p) {
+      p.0 >=. 0.0 && p.0 <. 1.0 && p.1 >=. 0.0 && p.1 <. 1.0
+    })
+  use _ <- result.try(case valid_offsets {
+    True -> Ok(Nil)
+    False -> Error("sample offsets must lie in [0,1)")
+  })
   case width <= 0 || height <= 0 || list.is_empty(offsets) {
     True -> Error("dimensions and sample count must be positive")
     False -> {

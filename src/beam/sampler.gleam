@@ -7,6 +7,13 @@ pub fn center() -> List(#(Float, Float)) {
 }
 
 pub fn grid(side: Int) -> List(#(Float, Float)) {
+  case side <= 0 {
+    True -> []
+    False -> valid_grid(side)
+  }
+}
+
+fn valid_grid(side: Int) -> List(#(Float, Float)) {
   list.repeat(Nil, side * side)
   |> list.index_map(fn(_, i) {
     #(
@@ -36,6 +43,13 @@ fn jitter_loop(
 }
 
 pub fn stratified(side: Int, seed: Int) -> List(#(Float, Float)) {
+  case side <= 0 {
+    True -> []
+    False -> valid_stratified(side, seed)
+  }
+}
+
+fn valid_stratified(side: Int, seed: Int) -> List(#(Float, Float)) {
   jitter(side * side, seed)
   |> list.index_map(fn(p, i) {
     #(

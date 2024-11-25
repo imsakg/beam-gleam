@@ -134,3 +134,10 @@ pub fn public_api_budget_test() {
   renderer.sampled(camera(), [], [], 1, 1, 2, list.repeat(#(0.5, 0.5), 257))
   |> should.equal(Error("render exceeds resource limits"))
 }
+
+pub fn invalid_offsets_test() {
+  renderer.sampled(camera(), [], [], 1, 1, 1, [#(-0.1, 0.5)])
+  |> should.equal(Error("sample offsets must lie in [0,1)"))
+  renderer.sampled(camera(), [], [], 1, 1, 1, [#(0.5, 1.0)])
+  |> should.equal(Error("sample offsets must lie in [0,1)"))
+}

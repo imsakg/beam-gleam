@@ -32,3 +32,8 @@ pub fn stratified_cells_test() {
   })
   sampler.stratified(1, 42) |> should.equal(sampler.jitter(1, 42))
 }
+
+pub fn negative_side_test() {
+  sampler.grid(-2) |> should.equal([])
+  sampler.stratified(-2, 42) |> should.equal([])
+}

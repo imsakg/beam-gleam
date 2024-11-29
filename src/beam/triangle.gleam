@@ -15,7 +15,12 @@ pub fn intersect(
   let e2 = vector.subtract(c, a)
   let p = vector.cross(r.direction, e2)
   let det = vector.dot(e1, p)
-  case float.absolute_value(det) <. 1.0e-10 {
+  let tolerance =
+    1.0e-12
+    *. vector.length(e1)
+    *. vector.length(e2)
+    *. vector.length(r.direction)
+  case float.absolute_value(det) <=. tolerance {
     True -> Error(Nil)
     False -> {
       let inverse = 1.0 /. det
@@ -31,7 +36,14 @@ pub fn intersect(
         False ->
           Ok(
             hit.Hit(
-              ..hit.make(r, t, vector.unit_or_zero(vector.cross(e1, e2))),
+              ..hit.make(
+                r,
+                t,
+                vector.unit_or_zero(vector.cross(
+                  vector.unit_or_zero(e1),
+                  vector.unit_or_zero(e2),
+                )),
+              ),
               u: u,
               v: v,
             ),

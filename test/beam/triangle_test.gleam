@@ -36,3 +36,19 @@ pub fn winding_and_edge_test() {
   triangle.intersect(a, a, c, r, interval.positive())
   |> should.equal(Error(Nil))
 }
+
+pub fn small_triangle_test() {
+  let a = v.new(-0.00000001, -0.00000001, -1.0)
+  let b = v.new(0.00000001, -0.00000001, -1.0)
+  let c = v.new(0.0, 0.00000001, -1.0)
+  let assert Ok(h) =
+    triangle.intersect(
+      a,
+      b,
+      c,
+      ray.Ray(v.zero(), v.new(0.0, 0.0, -1.0)),
+      interval.positive(),
+    )
+  assertions.close(h.t, 1.0)
+  assertions.vector_close(h.normal, v.new(0.0, 0.0, 1.0))
+}

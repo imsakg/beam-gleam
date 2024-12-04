@@ -64,3 +64,24 @@ pub fn spherical_uv_test() {
   assertions.close(h.v, 0.5)
   assertions.close(h.u, 0.25)
 }
+
+pub fn distant_sphere_precision_test() {
+  let r = ray.Ray(v.zero(), v.new(0.0, 0.0, -1.0))
+  let assert Ok(h) =
+    sphere.intersect(
+      v.new(0.0, 0.0, -100_000_000.0),
+      1.0,
+      r,
+      interval.positive(),
+    )
+  assertions.close(h.t, 99_999_999.0)
+  assertions.vector_close(h.normal, v.new(0.0, 0.0, 1.0))
+  let assert Ok(slow) =
+    sphere.intersect(
+      v.new(0.0, 0.0, -3.0),
+      1.0,
+      ray.Ray(v.zero(), v.new(0.0, 0.0, -0.0000000000001)),
+      interval.positive(),
+    )
+  assertions.vector_close(slow.point, v.new(0.0, 0.0, -2.0))
+}

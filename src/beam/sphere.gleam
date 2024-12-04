@@ -6,37 +6,40 @@ import beam/vector
 import gleam/float
 import gleam/result
 
+/// Closest-approach geometry avoids subtracting almost equal large squares.
 pub fn intersect(
   center: vector.Vec,
   radius: Float,
   r: Ray,
   span: Interval,
 ) -> Result(Hit, Nil) {
-  let oc = vector.subtract(r.origin, center)
+  let offset = vector.subtract(r.origin, center)
   let a = vector.length_squared(r.direction)
-  let half_b = vector.dot(oc, r.direction)
-  let c = vector.length_squared(oc) -. radius *. radius
-  let discriminant = half_b *. half_b -. a *. c
-  case discriminant <. 0.0 || radius <=. 0.0 || a <. 1.0e-24 {
+  case radius <=. 0.0 || a <=. 0.0 {
     True -> Error(Nil)
     False -> {
-      let sqrt_d = float.square_root(discriminant) |> result.unwrap(0.0)
-      let near = { 0.0 -. half_b -. sqrt_d } /. a
-      let root = case interval.surrounds(span, near) {
-        True -> near
-        False -> { 0.0 -. half_b +. sqrt_d } /. a
-      }
-      case interval.surrounds(span, root) {
-        False -> Error(Nil)
-        True ->
-          Ok(surface_hit(
-            r,
-            root,
-            vector.scale(
-              vector.subtract(ray.at(r, root), center),
-              1.0 /. radius,
-            ),
-          ))
+      let middle = { 0.0 -. vector.dot(offset, r.direction) } /. a
+      let closest = vector.add(offset, vector.scale(r.direction, middle))
+      let remaining = radius *. radius -. vector.length_squared(closest)
+      case remaining <. 0.0 {
+        True -> Error(Nil)
+        False -> {
+          let delta = float.square_root(remaining /. a) |> result.unwrap(0.0)
+          let near = middle -. delta
+          let root = case interval.surrounds(span, near) {
+            True -> near
+            False -> middle +. delta
+          }
+          case interval.surrounds(span, root) {
+            False -> Error(Nil)
+            True ->
+              Ok(surface_hit(
+                r,
+                root,
+                vector.unit_or_zero(vector.subtract(ray.at(r, root), center)),
+              ))
+          }
+        }
       }
     }
   }

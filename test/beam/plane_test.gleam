@@ -38,3 +38,15 @@ pub fn degenerate_and_behind_test() {
   )
   |> should.equal(Error(Nil))
 }
+
+pub fn planar_uv_test() {
+  let assert Ok(h) =
+    plane.intersect(
+      v.new(0.0, -1.0, 0.0),
+      v.new(0.0, 1.0, 0.0),
+      ray.Ray(v.zero(), v.new(0.5, -1.0, 0.5)),
+      interval.positive(),
+    )
+  assertions.close(h.u, -0.5)
+  assertions.close(h.v, 0.5)
+}

@@ -41,3 +41,28 @@ pub fn invalid_cylinder_test() {
   cylinder.intersect(v.zero(), 0.0, 2.0, True, r, interval.positive())
   |> should.equal(Error(Nil))
 }
+
+pub fn cylinder_uv_test() {
+  let assert Ok(side) =
+    cylinder.intersect(
+      v.zero(),
+      1.0,
+      2.0,
+      True,
+      ray.Ray(v.new(0.0, 1.0, 3.0), v.new(0.0, 0.0, -1.0)),
+      interval.positive(),
+    )
+  assertions.close(side.u, 0.25)
+  assertions.close(side.v, 0.5)
+  let assert Ok(cap) =
+    cylinder.intersect(
+      v.zero(),
+      1.0,
+      2.0,
+      True,
+      ray.Ray(v.new(0.5, 4.0, 0.0), v.new(0.0, -1.0, 0.0)),
+      interval.positive(),
+    )
+  assertions.close(cap.u, 0.75)
+  assertions.close(cap.v, 0.5)
+}

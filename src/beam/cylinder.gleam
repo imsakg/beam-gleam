@@ -1,5 +1,6 @@
 import beam/hit.{type Hit}
 import beam/interval.{type Interval}
+import beam/math
 import beam/ray.{type Ray}
 import beam/vector.{type Vec}
 import gleam/float
@@ -86,7 +87,7 @@ fn side_root(
   let p = vector.subtract(ray.at(r, t), center)
   case !interval.surrounds(span, t) || p.y <. 0.0 || p.y >. height {
     True -> Error(Nil)
-    False -> Ok(hit.make(r, t, vector.new(p.x /. radius, 0.0, p.z /. radius)))
+    False -> Ok(side_hit(r, t, p, radius, height))
   }
 }
 
@@ -118,9 +119,24 @@ fn cap(
         interval.surrounds(span, t)
         && p.x *. p.x +. p.z *. p.z <=. radius *. radius
       {
-        True -> Ok(hit.make(r, t, vector.new(0.0, sign, 0.0)))
+        True -> Ok(cap_hit(r, t, p, radius, sign))
         False -> Error(Nil)
       }
     }
   }
+}
+
+fn side_hit(r: Ray, t: Float, p: Vec, radius: Float, height: Float) -> Hit {
+  let normal = vector.new(p.x /. radius, 0.0, p.z /. radius)
+  let u =
+    { math.atan2(0.0 -. p.z, p.x) +. 3.141592653589793 } /. 6.283185307179586
+  hit.Hit(..hit.make(r, t, normal), u: u, v: p.y /. height)
+}
+
+fn cap_hit(r: Ray, t: Float, p: Vec, radius: Float, sign: Float) -> Hit {
+  hit.Hit(
+    ..hit.make(r, t, vector.new(0.0, sign, 0.0)),
+    u: 0.5 +. p.x /. { 2.0 *. radius },
+    v: 0.5 +. p.z /. { 2.0 *. radius },
+  )
 }

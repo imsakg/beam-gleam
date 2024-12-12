@@ -1,0 +1,18 @@
+name: Gleam raytracer
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '29.1'
+          gleam-version: '1.19.2'
+          rebar3-version: '3.27.3'
+      - run: gleam deps download
+      - run: gleam format --check src test
+      - run: gleam test
+      - run: python3 scripts/smoke_render.py

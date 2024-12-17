@@ -39,4 +39,8 @@ For each behavior: add a focused failing gleeunit test; run `gleam test` to obse
 - Multiple primitives, textures, lit shadows, reflective surfaces and camera options are used by runnable presets.
 - Read-only original-history comparison and dirty-file hashes match the baseline. No remote writes.
 
-The sequence may be refined for dependency order; tests and functioning integrations take priority over arbitrary feature counts.
+## Implemented outcome
+
+The Gleam core, six primitive families, textures/UVs, lighting/shadows, reflection, camera/sampling, three presets, diagnostic views, four encoders and CLI are implemented. Independent review findings have regression tests and fixes. Local Gleeunit and CLI smoke checks pass. Final integration regressions and the exact signed-history audit close the work; remote CI and pushing remain out of scope.
+
+See [README](../../README.md) for runnable commands and [architecture](../architecture.md) for implemented contracts and limitations. Original Rust sources and pre-existing dirty files remain untouched.

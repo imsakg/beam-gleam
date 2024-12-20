@@ -141,3 +141,17 @@ pub fn invalid_offsets_test() {
   renderer.sampled(camera(), [], [], 1, 1, 1, [#(0.5, 1.0)])
   |> should.equal(Error("sample offsets must lie in [0,1)"))
 }
+
+pub fn top_down_scanline_test() {
+  let objects = [
+    scene.Object(
+      shape.Sphere(v.new(0.0, 2.0, -3.0), 0.6),
+      material.emissive(v.new(1.0, 0.0, 0.0), 1.0),
+    ),
+  ]
+  let assert Ok(frame) = renderer.render(camera(), objects, [], 3, 3, 2)
+  let assert Ok(top) = frame.pixels |> list.drop(1) |> list.first
+  let assert Ok(bottom) = frame.pixels |> list.drop(7) |> list.first
+  assertions.vector_close(top, v.new(1.0, 0.0, 0.0))
+  assertions.vector_close(bottom, v.zero())
+}

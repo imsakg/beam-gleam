@@ -59,6 +59,7 @@ Render guards: positive dimensions up to 4096 per axis, 1–256 samples, depth 1
 ```sh
 gleam format --check src test
 gleam test
+python3 -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/smoke_render.py
 ```
 

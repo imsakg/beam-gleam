@@ -1,7 +1,10 @@
+use std::rc::Rc;
+
 use crate::{
     hittable::{HitRecord, Hittable},
     hittable_list::HittableList,
     interval::Interval,
+    material::{self, Material},
     ray::Ray,
     utils::{
         color::{self, Color},
@@ -140,10 +143,29 @@ impl Camera {
         let mut rec = HitRecord {
             p: Point3::new(0.0, 0.0, 0.0),
             normal: Vec3::new(0.0, 0.0, 0.0),
+            mat: Rc::new(Material::Lambertian {
+                albedo: Color::new(0.0, 0.0, 0.0),
+            }),
             t: 0.0,
             front_face: false,
         };
 
+        if (world.hit(
+            r,
+            Interval::new(Some(Interval {
+                min: 0.001,
+                max: INFINITY,
+            })),
+            &mut rec,
+        )) {
+            let scattered = Ray::new(rec.p, rec.normal + Vec3::random_unit_vector());
+            let attenuation = Color::new(0.5, 0.5, 0.5);
+
+            if (rec.mat.scatter(r, &rec, &mut attenuation, &mut scattered)) {
+                return attenuation * self.ray_color(&scattered, depth - 1, world);
+            }
+            return Color::new(0.0, 0.0, 0.0);
+        }
         let temp = Interval::new(Some(Interval {
             min: 0.001,
             max: INFINITY,
